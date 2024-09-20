@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<ruleset name="Project Ruleset">
+    <description>Basic linting rules for the project.</description>
+
+    <!-- Define the paths to scan -->
+    <file>src</file>
+    <file>tests</file>
+
+    <!-- Include the default coding standard -->
+    <rule ref="PSR12"/>
+
+    <!-- Show warnings as well as errors -->
+    <arg name="warning-severity" value="1"/>
+
+    <!-- Ignore vendor directory -->
+    <exclude-pattern>vendor/*</exclude-pattern>
+
+    <!-- Add any custom rules or exclusions here -->
+    <!-- Example: Exclude specific sniffs -->
+    <!-- <exclude name="Generic.WhiteSpace.DisallowTabIndent"/> -->
+</ruleset>
