@@ -17,11 +17,6 @@ class Starbattle
     private $stars;
 
     /*
-        Holds the number of times, the solve-function is being called.
-    */
-    private $tries = 0;
-
-    /*
         Initializes the stars-array
     */
     public function __construct($gridString)
@@ -35,13 +30,14 @@ class Starbattle
             }
         }
 
+        // Draw the grid.
         echo "data: " . json_encode(['mode' => 'grid', 'grid' => $this->grid ]) . "\n\n";
         flush();
     }
 
     /*
         Convert the string, that represents the grid into a
-        two-dimensional array
+        two-dimensional array for internal use
         @return array The grid
     */
     private function convertGrid($gridString)
@@ -72,7 +68,6 @@ class Starbattle
             return;
         }
 
-        $this->tries++;
         for ($c = 0; $c < count($this->grid[0]); $c++) {
             if ($this->setStar($row, $c)) {
                 $this->solve($row + 1);
@@ -185,7 +180,7 @@ class Starbattle
         return true;
     }
 
-    public function send($mode, $row, $col)
+    private function send($mode, $row, $col)
     {
         $data = [
             'mode' => $mode,

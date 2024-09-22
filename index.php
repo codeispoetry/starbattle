@@ -35,14 +35,16 @@
             switch(data.mode) {
                 case 'grid':
                     drawPlayground(data.grid);
+                    console.time('solving');
                     break;
                 case 'done':
+                    console.timeEnd('solving');
                     clearLastTriedCell();
                     source.close();
                     break;
                 case '*':
                     starsPlaced++;
-                    document.getElementById('starsPlaced').textContent = `starsPlaced: ${starsPlaced}`;
+                    document.getElementById('starsPlaced').textContent = `stars placed: ${starsPlaced}`;
                     incrementTryCounter();
                     setCell(data.mode, data.row, data.col);
                     break;
@@ -73,7 +75,7 @@
 
         function incrementTryCounter(){
             fieldsTested++;
-            document.getElementById('fieldsTested').textContent = `fieldsTested: ${fieldsTested}`;
+            document.getElementById('fieldsTested').textContent = `fields tested: ${fieldsTested}`;
         }
 
         function setCell(mode, row, col) {
