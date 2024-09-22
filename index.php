@@ -1,9 +1,3 @@
-<?php
-
-namespace Starbattle;
-
-require_once('starbattle.php');
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,24 +17,55 @@ require_once('starbattle.php');
         }
     </style>
 </head>
-<body>
-<?php
+<body>      
+    <script>
+         const source = new EventSource('data.php');
 
-$grids = [
-    '12233,14433,11433,51433,55555',
-    '11122,31344,33344,55344,55555',
-    '11223,11243,11443,11553,55555',
-    '111111,233311,222333,244533,225533,555566',
-    '11111112,11122222,22222223,22243333,55543333,44446337,48666667,48677777'
-];
+        // Listen for incoming messages and update the page
+        source.onmessage = function(event) {
+            const data = JSON.parse(event.data);
 
-$randomKey = array_rand($grids);
-$randomKey = 0;
-$grid = $grids[$randomKey];
+            switch(data.mode) {
+                case 'grid':
+                    drawPlayground(data.grid);
+                    break;
+                case 'done':
+                    source.close();
+                    break;
+                default:
+                    setStar(data.mode, data.row, data.col);
+            }
+          
+        };
 
-$starbattle = new Starbattle($grid);
-$starbattle->solve(substr_count($grid, ','));
+        // Handle any errors with the connection
+        source.onerror = function(event) {
+            console.error("SSE connection error", event);
+            source.close();
+        };
 
-?>
+        function setStar(mode, row, col) {
+            const cell = document.getElementById(`${row}_${col}`);
+            cell.textContent = mode;
+        }
+
+        function drawPlayground(grid) {
+            const size = grid.length;
+            const colors = [ 'red', 'green', 'blue', 'yellow', 'purple', 'orange', 'pink', 'brown', 'cyan'];
+            const table = document.createElement('table');
+            for (let i = 0; i < size; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < size; j++) {
+                    const cell = document.createElement('td');
+                    cell.id = `${i}_${j}`;
+                    cell.style.backgroundColor = colors[ grid[i][j] ];
+
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+            document.body.appendChild(table);
+        }
+    </script>
 </body>
 </html>

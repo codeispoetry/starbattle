@@ -20,6 +20,19 @@ class Starbattle
         Holds the number of times, the solve-function is being called.
     */
     private $tries = 0;
+    /*
+        The colors for the different areas
+    */
+    private $colors = [
+        1 => 'red',
+        2 => 'blue',
+        3 => 'green',
+        4 => 'yellow',
+        5 => 'purple',
+        6 => 'orange',
+        7 => 'pink',
+        8 => 'lime'
+    ];
 
     /*
         Initializes the stars-array
@@ -34,9 +47,6 @@ class Starbattle
                 $this->stars[$row][$col] = '';
             }
         }
-
-        echo "data: " . json_encode(['mode' => 'grid', 'grid' => $this->grid ]) . "\n\n";
-        flush();
     }
 
     /*
@@ -66,8 +76,7 @@ class Starbattle
         // The base case: All stars set in last row
         if ($row < 0) {
             if ($this->countStars() === count($this->grid)) {
-                // Solution found
-                echo "data: " . json_encode(['mode' => 'done']) . "\n\n";
+                $this->draw();
             }
             return;
         }
@@ -103,10 +112,9 @@ class Starbattle
         @param $row The coordinates in row and colum
         @param $c The column.
     */
-    private function removeStar($row, $col)
+    private function removeStar($row, $c)
     {
-        $this->stars[$row][$col] = '';
-        $this->send('', $row, $col);
+        $this->stars[$row][$c] = '';
     }
 
     /*
@@ -121,7 +129,6 @@ class Starbattle
             return false;
         }
         $this->stars[$row][$col] = '*';
-        $this->send('*', $row, $col);
         return true;
     }
 
@@ -184,16 +191,24 @@ class Starbattle
         return true;
     }
 
-    public function send($mode, $row, $col)
+    /*
+        Draws the grid with the correct stars
+    */
+    private function draw()
     {
-        $data = [
-            'mode' => $mode,
-            'row' => $row,
-            'col' => $col
-        ];
-
-        echo "data: " . json_encode($data) . "\n\n";
-        flush();
-        usleep(50 * 1000);
+        printf('Tried %d stars on that %dx%d grid', $this->tries, count($this->grid), count($this->grid[0]));
+        echo '<table>';
+        foreach ($this->grid as $rowIndex => $row) {
+            echo '<tr>';
+            foreach ($row as $columnIndex => $cell) {
+                printf(
+                    '<td style="background-color: %s;">%s</td>',
+                    $this->colors[$cell],
+                    $this->stars[$rowIndex][$columnIndex]
+                );
+            }
+            echo '</tr>';
+        }
+        echo '</table>';
     }
 }
