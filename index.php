@@ -17,12 +17,16 @@
         }
     </style>
 </head>
-<body>   
-    <div id="tries"></div>   
+<body>  
+    <div style="display: flex">
+        <div id="fieldsTested" style="margin-right: 40px"></div> 
+        <div id="starsPlaced"></div>   
+    </div>
     <script>
          const source = new EventSource('data.php');
          const lastTriedCell = { row: -1, col: 0 };
-         let tries = 0;
+         let fieldsTested = 0;
+         let starsPlaced = 0;
 
         // Listen for incoming messages and update the page
         source.onmessage = function(event) {
@@ -35,6 +39,12 @@
                 case 'done':
                     clearLastTriedCell();
                     source.close();
+                    break;
+                case '*':
+                    starsPlaced++;
+                    document.getElementById('starsPlaced').textContent = `starsPlaced: ${starsPlaced}`;
+                    incrementTryCounter();
+                    setCell(data.mode, data.row, data.col);
                     break;
                 case 'try':
                     clearLastTriedCell();
@@ -62,8 +72,8 @@
         };
 
         function incrementTryCounter(){
-            tries++;
-            document.getElementById('tries').textContent = `Tries: ${tries}`;
+            fieldsTested++;
+            document.getElementById('fieldsTested').textContent = `fieldsTested: ${fieldsTested}`;
         }
 
         function setCell(mode, row, col) {

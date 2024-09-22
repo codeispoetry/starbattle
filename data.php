@@ -2,7 +2,7 @@
 
 namespace Starbattle;
 
-define('DELAY_IN_SECONDS', 0.2);
+define('DELAY_IN_SECONDS', 0.02);
 
 require_once('starbattle.php');
 
@@ -25,7 +25,7 @@ $grids = [
 ];
 
 $randomKey = array_rand($grids);
-$randomKey = 0;
+$randomKey = 4;
 $grid = $grids[$randomKey];
 
 $starbattle = new Starbattle($grid);
