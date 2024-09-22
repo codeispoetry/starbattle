@@ -61,10 +61,10 @@ class Starbattle
         Tries to set a star and detects, if all star could be set.
         @param $row The row, over which columns is being looped.
     */
-    public function solve($row)
+    public function solve($row = 0)
     {
         // The base case: All stars set in last row
-        if ($row < 0) {
+        if ($row === count($this->grid)) {
             if ($this->countStars() === count($this->grid)) {
                 // Solution found
                 echo "data: " . json_encode(['mode' => 'done']) . "\n\n";
@@ -73,9 +73,9 @@ class Starbattle
         }
 
         $this->tries++;
-        for ($c = count($this->grid[0]) - 1; $c >= 0; $c--) {
+        for ($c = 0; $c < count($this->grid[0]); $c++) {
             if ($this->setStar($row, $c)) {
-                $this->solve($row - 1);
+                $this->solve($row + 1);
                 // If I come back here, no solution was found. So remove the star.
                 $this->removeStar($row, $c);
             }
@@ -118,6 +118,7 @@ class Starbattle
     private function setStar($row, $col)
     {
         if (! $this->isAllowed($row, $col)) {
+            $this->send('try', $row, $col);
             return false;
         }
         $this->stars[$row][$col] = '*';
@@ -194,6 +195,6 @@ class Starbattle
 
         echo "data: " . json_encode($data) . "\n\n";
         flush();
-        usleep(50 * 1000);
+        usleep(DELAY_IN_SECONDS * 1000000);
     }
 }

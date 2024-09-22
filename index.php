@@ -20,6 +20,7 @@
 <body>      
     <script>
          const source = new EventSource('data.php');
+         const lastTriedCell = { row: 0, col: 0 };
 
         // Listen for incoming messages and update the page
         source.onmessage = function(event) {
@@ -30,10 +31,17 @@
                     drawPlayground(data.grid);
                     break;
                 case 'done':
+                    setCell('', lastTriedCell.row, lastTriedCell.col);
                     source.close();
                     break;
+                case 'try':
+                    setCell('', lastTriedCell.row, lastTriedCell.col);
+                    lastTriedCell.row = data.row;
+                    lastTriedCell.col = data.col;
+                    setCell('?', data.row, data.col);
+                    break;
                 default:
-                    setStar(data.mode, data.row, data.col);
+                    setCell(data.mode, data.row, data.col);
             }
           
         };
@@ -44,7 +52,7 @@
             source.close();
         };
 
-        function setStar(mode, row, col) {
+        function setCell(mode, row, col) {
             const cell = document.getElementById(`${row}_${col}`);
             cell.textContent = mode;
         }

@@ -2,6 +2,8 @@
 
 namespace Starbattle;
 
+define('DELAY_IN_SECONDS', 0.01);
+
 require_once('starbattle.php');
 
 header('Content-Type: text/event-stream');
@@ -23,9 +25,9 @@ $grids = [
 ];
 
 $randomKey = array_rand($grids);
-$randomKey = 2;
+$randomKey = 1;
 $grid = $grids[$randomKey];
 
 $starbattle = new Starbattle($grid);
 
-$starbattle->solve(substr_count($grid, ','));
+$starbattle->solve();
