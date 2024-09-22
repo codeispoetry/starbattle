@@ -17,10 +17,12 @@
         }
     </style>
 </head>
-<body>      
+<body>   
+    <div id="tries"></div>   
     <script>
          const source = new EventSource('data.php');
-         const lastTriedCell = { row: 0, col: 0 };
+         const lastTriedCell = { row: -1, col: 0 };
+         let tries = 0;
 
         // Listen for incoming messages and update the page
         source.onmessage = function(event) {
@@ -31,26 +33,38 @@
                     drawPlayground(data.grid);
                     break;
                 case 'done':
-                    setCell('', lastTriedCell.row, lastTriedCell.col);
+                    clearLastTriedCell();
                     source.close();
                     break;
                 case 'try':
-                    setCell('', lastTriedCell.row, lastTriedCell.col);
+                    clearLastTriedCell();
                     lastTriedCell.row = data.row;
                     lastTriedCell.col = data.col;
                     setCell('?', data.row, data.col);
+                    incrementTryCounter();
                     break;
                 default:
+                    incrementTryCounter();
                     setCell(data.mode, data.row, data.col);
             }
           
         };
+
+        function clearLastTriedCell(){
+            if(lastTriedCell.row === -1) return;
+            setCell('', lastTriedCell.row, lastTriedCell.col);
+        }
 
         // Handle any errors with the connection
         source.onerror = function(event) {
             console.error("SSE connection error", event);
             source.close();
         };
+
+        function incrementTryCounter(){
+            tries++;
+            document.getElementById('tries').textContent = `Tries: ${tries}`;
+        }
 
         function setCell(mode, row, col) {
             const cell = document.getElementById(`${row}_${col}`);
